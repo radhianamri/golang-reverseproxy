@@ -12,3 +12,8 @@ Using the private key, generate a cerificate and fillout the common name baased 
 ```bash
 openssl req -new -x509 -sha256 -key server.key -out server.crt -days 3650
 ```
+
+Run code using 'sudo' in root directory since it binds 443 port
+```bash
+sudo go run main.go
+```

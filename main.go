@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"sync"
 )
 
 const indexHTML = `
@@ -13,13 +12,11 @@ const indexHTML = `
 	<head>
 		<title>Hello World</title>
 		<script src="/static/app.js"></script>
-		<link rel="stylesheet" href="/static/app.css">
-		<link rel="stylesheet" href="/static/rockyou.css">
-		<link rel="stylesheet" href="/static/rockyou2.css">
+		<link rel="stylesheet" href="/static/app.css"">
 	</head>
 	<body>
 	Hello, gopher!<br>
-
+	<img src="https://blog.golang.org/go-brand/logos.jpg" height="100">
 	</body>
 </html>
 `
@@ -36,21 +33,18 @@ func main() {
 			return
 		}
 		if pusher, ok := w.(http.Pusher); ok {
-			httpPushFileSync("/static/app.js", pusher)
-			httpPushFileSync("/static/app.css", pusher)
+			httpPushFile("/static/app.js", pusher)
+			httpPushFile("/static/app.css", pusher)
 		}
 
 		fmt.Fprintf(w, indexHTML)
 
 	})
-	err := http.ListenAndServe(":443", nil)
+
+	err := http.ListenAndServeTLS(":443", "server.crt", "server.key", nil)
 	if err != nil {
 		panic(err)
 	}
-	// err := http.ListenAndServeTLS(":443", "server.crt", "server.key", nil)
-	// if err != nil {
-	// 	panic(err)
-	// }
 
 }
 
@@ -59,4 +53,3 @@ func httpPushFile(fileName string, pusher http.Pusher) {
 		log.Printf("Failed to push: %v", err)
 	}
 }
-s
